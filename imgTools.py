@@ -66,7 +66,7 @@ def saturateImage(filteredImage, satPercent):
 
 def averageAllImages(allImagesPath):
     #averages all the images in a given path
-    #allImagesPath: path with all the images, obtained e.g. with os.path.join(folderPathWithAllImages, '*.png')
+    #allImagesPath: path with all the images, obtained e.g. with sorted(glob.glob(os.path.join(folderPathWithAllImages, '*.png')))
     #output: average of all images -- float type 2d array
     a = 0
     nbImages = len(allImagesPath)
