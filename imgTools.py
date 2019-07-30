@@ -43,7 +43,7 @@ def imStretchNorm(filteredImage):
 
 
 def saturateImage(filteredImage, satPercent):
-    #takes a grayscale image, stretches its histogram between 0 and 1 and saturates part of the pixels
+    #takes a grayscale image, stretches its histogram between 0 and 255 and saturates part of the pixels
     #filteredImage: image whose contrast we want to improve
     #satPercent: float between 0 and 1 (not including 0 and 1), fraction of pixels we want to saturate 
     #(careful, may not work with satPercent=0 or satPercent=1)
