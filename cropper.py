@@ -13,14 +13,14 @@ def _crop(imgToCrop,imgMask,maskSize,wellSize,aspectRatio):
     """Crop function. Works only on 2D images.
     """
 
-    (yc, xc) = _getCenter(imgMask,maskSize,wellSize,aspectRatio)
+    (xc, yc) = _getCenter(imgMask,maskSize,wellSize,aspectRatio)
 
     cropDist = maskSize*aspectRatio
 
     startx = max(xc-(cropDist//2), 0)
     starty = max(yc-(cropDist//2), 0)
 
-    return imgToCrop[starty:starty+cropDist,startx:startx+cropDist]
+    return imgToCrop[int(starty):int(starty+cropDist),int(startx):int(startx+cropDist)]
 
 def _makeCircMask(maskSize, wellSize, aspectRatio):
 
@@ -30,8 +30,8 @@ def _makeCircMask(maskSize, wellSize, aspectRatio):
     Y = np.arange(0, cropDist)
     X, Y = np.meshgrid(X, Y)
 
-    mask = ((np.sqrt((X-cropDist//2)**2 + (Y-cropDist//2)**2) > wellSize*aspectRatio//2 - 100) &
-            (np.sqrt((X-cropDist//2)**2 + (Y-cropDist//2)**2) < wellSize*aspectRatio//2 + 100))
+    mask = ((np.sqrt((X-cropDist//2)**2 + (Y-cropDist//2)**2) > (wellSize*aspectRatio)//2 - 20*aspectRatio) &
+            (np.sqrt((X-cropDist//2)**2 + (Y-cropDist//2)**2) < (wellSize*aspectRatio)//2 + 20*aspectRatio))
 
     return mask.astype(np.int)
 
