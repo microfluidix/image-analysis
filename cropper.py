@@ -5,6 +5,8 @@ import cv2
 import os
 from tqdm import tqdm_notebook as tqdm
 import skimage
+from skimage import io
+
 
 
 def _crop(imgToCrop,imgMask,maskSize,wellSize,aspectRatio):
@@ -57,7 +59,9 @@ def _cropByWell(PATH,maskSize,wellSize,aspectRatio):
 
     return
 
+
 """ ====== SPHEROID CROPPING ======= """
+
 
 def _verifDim(im):
 
@@ -101,7 +105,7 @@ def _getCenterBary(im,livePosition):
     return np.mean(z), np.mean(x), np.mean(y)
 
 
-def _crop3D(imgToCrop,livePosition,maskSize,aspectRatio):
+def _crop3D(imgToCrop,livePosition,wellSize,aspectRatio):
 
     """Crop function. Works only on 3D images. Hypothesis that image arranged
     along 'z, x, y' dimensions.
@@ -118,7 +122,7 @@ def _crop3D(imgToCrop,livePosition,maskSize,aspectRatio):
 
     zc, yc, xc = _getCenterBary(imgToCrop,livePosition)
 
-    cropDist = maskSize*aspectRatio
+    cropDist = wellSize*aspectRatio
     dz,dx,dy,nChannels = np.shape(imgToCrop)
 
     startx = int(max(xc-(cropDist//2), 0))
@@ -127,3 +131,21 @@ def _crop3D(imgToCrop,livePosition,maskSize,aspectRatio):
     endy = int(min(yc+(cropDist//2), dy))
 
     return imgToCrop[:, starty:endy,startx:endx,:]
+
+def _cropBySph(PATH,livePosition,wellSize,aspectRatio):
+
+    img = _loadImage(PATH)
+    cropedImg = _crop3D(img,livePosition,wellSize,aspectRatio)
+
+    if not os.path.exists(PATH + r'\cropped'):
+        os.mkdir(PATH + r'\\' + 'cropped')
+
+    i = 0
+
+    for im in cropedImg:
+
+        skimage.external.tifffile.imsave(PATH + r'\\cropped\\' + 'crop_z_%0d.tif' %i,
+            im)
+        i += 1
+
+    return
