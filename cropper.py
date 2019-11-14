@@ -7,7 +7,6 @@ from tqdm import tqdm_notebook as tqdm
 import skimage
 
 
-
 def _crop(imgToCrop,imgMask,maskSize,wellSize,aspectRatio):
 
     """Crop function. Works only on 2D images.
@@ -16,7 +15,6 @@ def _crop(imgToCrop,imgMask,maskSize,wellSize,aspectRatio):
     (xc, yc) = _getCenter(imgMask,maskSize,wellSize,aspectRatio)
 
     cropDist = maskSize*aspectRatio
-
     startx = max(xc-(cropDist//2), 0)
     starty = max(yc-(cropDist//2), 0)
 
@@ -43,7 +41,7 @@ def _getCenter(imgMask,maskSize,wellSize,aspectRatio):
 
     return unravel_index(conv.argmin(), conv.shape)
 
-def _cropAll(PATH,maskSize,wellSize,aspectRatio):
+def _cropByWell(PATH,maskSize,wellSize,aspectRatio):
 
     if not os.path.exists(PATH + r'\cropped'):
         os.mkdir(PATH + r'\\' + 'cropped')
@@ -58,3 +56,74 @@ def _cropAll(PATH,maskSize,wellSize,aspectRatio):
         i += 1
 
     return
+
+""" ====== SPHEROID CROPPING ======= """
+
+def _verifDim(im):
+
+    if not im.ndim == 4:
+
+        return False
+
+    return True
+
+def _loadImage(path):
+
+    """
+    ====== COMMENT ======
+
+    The function needs to be improved so as to add new channels without
+    requiring to manually add new channels by hand.
+
+    """
+
+    image_list = []
+    for filename in tqdm(sorted(os.listdir(path))): #assuming tif
+
+        if '.tif' in filename:
+
+            im = io.imread(path + '/' + filename)
+
+            image_list.append(im[:,:,:])
+
+    return np.asarray(image_list)
+
+def _getCenterBary(im,livePosition):
+
+    """ IDs barycenter of image.
+
+    """
+
+    value = np.percentile(img[:,:,:,livePosition], 99.9)
+    temp = img[:,:,:,livePosition] > value
+    z, x, y = np.nonzero(temp)
+
+    return np.mean(z), np.mean(x), np.mean(y)
+
+
+def _crop3D(imgToCrop,livePosition,maskSize,aspectRatio):
+
+    """Crop function. Works only on 3D images. Hypothesis that image arranged
+    along 'z, x, y' dimensions.
+
+    ====== Variable ======
+
+     - aspectRatio: mu-to-px conversion rate
+
+    """
+
+    if not _verifDim(imgToCrop):
+
+        return print("Image dimension not equal to 4")
+
+    zc, yc, xc = _getCenterBary(imgToCrop,livePosition)
+
+    cropDist = maskSize*aspectRatio
+    dz,dx,dy,nChannels = np.shape(imgToCrop)
+
+    startx = int(max(xc-(cropDist//2), 0))
+    starty = int(max(yc-(cropDist//2), 0))
+    endx = int(min(xc+(cropDist//2), dx))
+    endy = int(min(yc+(cropDist//2), dy))
+
+    return imgToCrop[:, starty:endy,startx:endx,:]
