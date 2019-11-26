@@ -98,8 +98,8 @@ def _getCenterBary(im,livePosition):
 
     """
 
-    value = np.percentile(img[:,:,:,livePosition], 99.9)
-    temp = img[:,:,:,livePosition] > value
+    value = np.percentile(im[:,:,:,livePosition], 99.9)
+    temp = im[:,:,:,livePosition] > value
     z, x, y = np.nonzero(temp)
 
     return np.mean(z), np.mean(x), np.mean(y)
