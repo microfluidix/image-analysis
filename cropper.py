@@ -45,15 +45,15 @@ def _getCenter(imgMask,maskSize,wellSize,aspectRatio):
 
 def _cropByWell(PATH,maskSize,wellSize,aspectRatio):
 
-    if not os.path.exists(PATH + r'\cropped'):
-        os.mkdir(PATH + r'\\' + 'cropped')
+    if not os.path.exists(os.path.join(PATH, 'cropped')):
+        os.mkdir(os.path.join(PATH, 'cropped'))
 
-    img = pims.ImageSequence(PATH + '\\*.tif', as_grey=True)
+    img = pims.ImageSequence(os.path.join(PATH, '*.tif'), as_grey=True)
     i = 0
-
     for im in tqdm(img):
 
-        skimage.external.tifffile.imsave(PATH + r'\\cropped\\' + 'crop_%d.tif' %i,
+
+        skimage.external.tifffile.imsave(os.path.join(PATH, 'cropped', 'crop_%d.tif' %i,
             _crop(im, im,maskSize,wellSize,aspectRatio))
         i += 1
 
@@ -86,7 +86,7 @@ def _loadImage(path):
 
         if '.tif' in filename:
 
-            im = io.imread(path + '/' + filename)
+            im = io.imread(os.path.join(path, filename))
 
             image_list.append(im[:,:,:])
 
@@ -137,14 +137,14 @@ def _cropBySph(PATH,livePosition,wellSize,aspectRatio):
     img = _loadImage(PATH)
     cropedImg = _crop3D(img,livePosition,wellSize,aspectRatio)
 
-    if not os.path.exists(PATH + r'\cropped'):
-        os.mkdir(PATH + r'\\' + 'cropped')
+    if not os.path.exists(os.path.join(PATH,'cropped'):
+        os.mkdir(os.path.join(PATH,'cropped')
 
     i = 0
 
     for im in cropedImg:
 
-        skimage.external.tifffile.imsave(PATH + r'\\cropped\\' + 'crop_z_%0d.tif' %i,
+        skimage.external.tifffile.imsave(os.path.join(PATH,'cropped','crop_z_%0d.tif' %i,
             im)
         i += 1
 
