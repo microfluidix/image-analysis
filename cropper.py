@@ -54,7 +54,7 @@ def _cropByWell(PATH,maskSize,wellSize,aspectRatio):
 
 
         skimage.external.tifffile.imsave(os.path.join(PATH, 'cropped', 'crop_%d.tif' %i,
-            _crop(im, im,maskSize,wellSize,aspectRatio))
+            _crop(im, im,maskSize,wellSize,aspectRatio)))
         i += 1
 
     return
@@ -137,14 +137,14 @@ def _cropBySph(PATH,livePosition,wellSize,aspectRatio):
     img = _loadImage(PATH)
     cropedImg = _crop3D(img,livePosition,wellSize,aspectRatio)
 
-    if not os.path.exists(os.path.join(PATH,'cropped'):
-        os.mkdir(os.path.join(PATH,'cropped')
+    if not os.path.exists(os.path.join(PATH,'cropped')):
+        os.mkdir(os.path.join(PATH,'cropped'))
 
     i = 0
 
     for im in cropedImg:
 
-        skimage.external.tifffile.imsave(os.path.join(PATH,'cropped','crop_z_%0d.tif' %i,
+        skimage.external.tifffile.imsave(os.path.join(PATH,'cropped','crop_z_%0d.tif' %i),
             im)
         i += 1
 
