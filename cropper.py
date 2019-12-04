@@ -39,7 +39,7 @@ def _getCenter(imgMask,maskSize,wellSize,aspectRatio):
 
     mask = _makeCircMask(maskSize,wellSize,aspectRatio)
 
-    conv = cv2.filter2D(imgMask, cv2.CV_32F, mask)
+    conv = cv2.filter2D(imgMask, cv2.CV_32F, mask, borderType = cv2.BORDER_REPLICATE)
 
     return unravel_index(conv.argmin(), conv.shape)
 
@@ -53,8 +53,8 @@ def _cropByWell(PATH,maskSize,wellSize,aspectRatio):
     for im in tqdm(img):
 
 
-        skimage.external.tifffile.imsave(os.path.join(PATH, 'cropped', 'crop_%d.tif' %i,
-            _crop(im, im,maskSize,wellSize,aspectRatio)))
+        skimage.external.tifffile.imsave(os.path.join(PATH, 'cropped', 'crop_%d.tif' %i),
+            _crop(im, im,maskSize,wellSize,aspectRatio))
         i += 1
 
     return
