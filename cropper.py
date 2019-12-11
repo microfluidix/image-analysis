@@ -12,6 +12,9 @@ from skimage import io
 def _crop(imgToCrop,imgMask,maskSize,wellSize,aspectRatio):
 
     """Crop function. Works only on 2D images.
+
+     - imgToCrop: image to be cropped
+     - imgMask: image used to select where to crop
     """
 
     (xc, yc) = _getCenter(imgMask,maskSize,wellSize,aspectRatio)
@@ -35,6 +38,18 @@ def _makeCircMask(maskSize, wellSize, aspectRatio):
 
     return mask.astype(np.int)
 
+def _makeDiskMask(maskSize, wellSize, aspectRatio):
+
+    cropDist = maskSize*aspectRatio
+
+    X = np.arange(0, cropDist)
+    Y = np.arange(0, cropDist)
+    X, Y = np.meshgrid(X, Y)
+
+    mask = (np.sqrt((X-cropDist//2)**2 + (Y-cropDist//2)**2) < (wellSize*aspectRatio)//2 + 20*aspectRatio)
+
+    return mask.astype(np.int)
+
 def _getCenter(imgMask,maskSize,wellSize,aspectRatio):
 
     mask = _makeCircMask(maskSize,wellSize,aspectRatio)
@@ -54,7 +69,7 @@ def _cropByWell(PATH,maskSize,wellSize,aspectRatio):
 
 
         skimage.external.tifffile.imsave(os.path.join(PATH, 'cropped', 'crop_%d.tif' %i),
-            _crop(im, im,maskSize,wellSize,aspectRatio))
+            _crop(im, im, maskSize,wellSize,aspectRatio))
         i += 1
 
     return
